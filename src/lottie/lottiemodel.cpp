@@ -208,7 +208,7 @@ void LOTGradient::populate(VGradientStops &stops, int frameNo)
         colorPoints = size / 4;
     }
     int    opacityArraySize = size - colorPoints * 4;
-    if (opacityArraySize % 2 != 0 || colorPoints > opacityArraySize / 2 && opacityArraySize < 4) {
+    if (opacityArraySize % 2 != 0 || (colorPoints > opacityArraySize / 2 && opacityArraySize < 4)) {
         opacityArraySize = 0;
     }
     float *opacityPtr = ptr + (colorPoints * 4);
