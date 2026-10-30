@@ -50,6 +50,7 @@ private:
     float                mDashOffset{0};
     VPath                mResult;
     bool                 mStartNewSegment=true;
+    bool                 mNoLength{false};
 };
 
 V_END_NAMESPACE

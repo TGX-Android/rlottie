@@ -33,6 +33,15 @@ VDasher::VDasher(const float *dashArray, size_t size)
     mIndex = 0;
     mCurrentLength = 0;
     mDiscard = false;
+    // A pattern without length, e.g. of dashes and gaps of zero or scaled to zero, would make
+    // updateActiveSegment look for a segment of some length forever, and a negative length
+    // never ends a segment: such a stroke isn't dashed, as SVG and Skia draw it
+    float totalLength = 0.0f;
+    for (size_t i = 0; i < mArraySize; i++) {
+        if (mDashArray[i].length < 0.0f || mDashArray[i].gap < 0.0f) mNoLength = true;
+        totalLength += mDashArray[i].length + mDashArray[i].gap;
+    }
+    if (vIsZero(totalLength)) mNoLength = true;
 }
 
 void VDasher::moveTo(const VPointF &p)
@@ -179,6 +188,7 @@ void VDasher::cubicTo(const VPointF &cp1, const VPointF &cp2, const VPointF &e)
 VPath VDasher::dashed(const VPath &path)
 {
     if (path.empty()) return VPath();
+    if (mNoLength) return path;
 
     mResult = {};
     mResult.reserve(path.points().size(), path.elements().size());
